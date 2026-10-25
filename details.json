@@ -1,1 +1,26 @@
-{"mouse": {"time": 0.25000000000000006, "count": 1, "level": 6, "cost": 110, "active": true}, "intern": {"time": 0.99, "count": 2, "level": 2, "cost": 75, "active": true}, "overall": {"isNew": false, "total_count": 3, "count": -277}}
+{
+    "mouse": {
+        "time": 0.1,
+        "count": 2,
+        "level": 9,
+        "cost": 170,
+        "active": true,
+        "powerLevel": 2,
+        "powerCost": 40
+    },
+    "intern": {
+        "time": 0.96,
+        "count": 2,
+        "level": 5,
+        "cost": 150,
+        "active": true,
+        "powerLevel": 1,
+        "powerCost": 80
+    },
+    "overall": {
+        "isNew": false,
+        "total_count": 4,
+        "count": 39,
+        "earned": 64
+    }
+}
