@@ -1,5 +1,6 @@
 import pygame
 import time
+import random
 from upgrades import *
 
 
@@ -8,7 +9,12 @@ pygame.font.init()
 screen = pygame.display.set_mode([800,500])
 clock = pygame.time.Clock()
 
-count = 0
+
+default()
+init()
+
+count = getCount()
+total_count = getCount(1)
 click = False
 hold = False
 
@@ -18,10 +24,15 @@ click_count = getMouse()["count"]
 text_list = []
 
 sample_font = pygame.font.SysFont('Comic Sans MS', 30)
+font_small = pygame.font.SysFont('Comic Sans MS', 13)
+font_small2 = pygame.font.SysFont('Comic Sans MS', 18)
 
-def createText(text, mouse_pos):
+def createText(text, mouse_pos, rand=False):
     text_ = sample_font.render(text, False, "black")
-    text_rect = text_.get_rect(center=mouse_pos)
+    if rand == False:
+        text_rect = text_.get_rect(center=mouse_pos)
+    else:
+        text_rect = text_.get_rect(center=(random.randint(100,700), random.randint(100,400)))
 
     vel_y = -1
     createdAt = time.time()
@@ -37,34 +48,52 @@ running = True
 spawn = False
 lastclick = 0
 
+clickable = True
+respawn = True
+lastSpawn = 0
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            saveData(count, total_count)
             running = False
-            
-        
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                count -= 10
-                upgrade(1, "time")
-                CLICK_RATE -= 0.05
-                
-            elif event.key == pygame.K_a:
-                count -= 500
-                click_count += 1
-                hold = True
-                
+
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and not click:
+            if pygame.mouse.get_pos()[0] >= 150 and pygame.mouse.get_pos()[1] >= 350:
+                if pygame.mouse.get_pos()[0] <= 250 and pygame.mouse.get_pos()[1] <= 450:
+                    clickable = False
+                    if getMouse()["level"] < 9:
+                        count -= getMouse()["cost"]
+                        upgradeMouse("time")
+                        CLICK_RATE = getMouse()["time"]
+            if pygame.mouse.get_pos()[0] >= 350 and pygame.mouse.get_pos()[1] >= 350:
+                if pygame.mouse.get_pos()[0] <= 450 and pygame.mouse.get_pos()[1] <= 450:
+                    clickable = False
+                    count -= getIntern()["cost"]
+                    upgradeIntern("time")
+                    SPAWN_RATE = getIntern()["time"]
+            else:
+                clickable = True
+
+            if event.button == 1 and not click and clickable:
                 click = True
                 mouse_pos = pygame.mouse.get_pos()
                 createText(f"+{click_count}", mouse_pos)
                 lastclick = time.time()
-                count += 1
+                count += getMouse()["count"]
+
+            
+    if getIntern()["active"] == True and respawn:
+        count_ = getIntern()["count"]
+        total_count = getMouse()["count"] + count_
+        createText(f"+{count_}", 0, rand=True)
+        respawn = False
+        lastSpawn = time.time()
+        count += count_
         
-        if pygame.mouse.get_pressed(3) == (False, False, True) and hold:
-            click = True
+    if (time.time() - lastSpawn) >= getIntern()["time"]:
+        respawn = True
 
     screen.fill("cyan")
 
@@ -89,7 +118,17 @@ while running:
     count_text = sample_font.render(f"Count: {count}", False, (0,0,0))
     screen.blit(count_text, (350,50))
 
-    counter = sample_font.render("+1", False, (0,0,0))
+    counter = sample_font.render(f"+{count}", False, (0,0,0))
+
+    mouse_button = pygame.draw.rect(screen, (255,255,255), (150,350,110,100),0, 10)
+    upgradeName1 = font_small.render(f"Click Rate: {round(CLICK_RATE,2)}", False, (0,0,0))
+    nextLevel1 = font_small2.render(f"{round(CLICK_RATE,2)} -> {round(CLICK_RATE - 0.05,2)}", False, (0,0,0))
+    screen.blit(upgradeName1, (155,370))
+    screen.blit(nextLevel1, (160,390))
+
+    intern_button = pygame.draw.rect(screen, (255,255,255), (350,350,100,100),0, 10)
+
+    
     
     if click:
         elapsed = time.time() - lastclick

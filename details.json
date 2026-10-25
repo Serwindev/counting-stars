@@ -1,14 +1,1 @@
-{
-    "mouse": {
-        "time": 6.938893903907228e-17,
-        "count": 1,
-        "level": 1,
-        "cost": 10
-    },
-    "intern": {
-        "time": 1,
-        "count": 1,
-        "level": 1,
-        "cost": 100
-    }
-}
+{"mouse": {"time": 0.25000000000000006, "count": 1, "level": 6, "cost": 110, "active": true}, "intern": {"time": 0.99, "count": 2, "level": 2, "cost": 75, "active": true}, "overall": {"isNew": false, "total_count": 3, "count": -277}}
